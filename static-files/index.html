@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>Mozilla Mobile Phonebook</title>
+<style>
+div#templates {
+  display: none;
+}
+</style>
+<script src="jquery.min.js"></script>
+<script>
+function onLoadPeople(people) {
+  $(window).ready(function() {
+    var list = $('<ul data-role="listview" data-theme="c"></ul>');
+    people.forEach(function(person) {
+      var item = $('<li></li>');
+      var link = $('<a></a>');
+      item.append(link);
+      link.attr('href', '#' + person.email);
+      link.text(person.name);
+      list.append(item);
+
+      var page = $('#templates div.detail').clone();
+      page.attr('id', person.email);
+      page.find('h1').text(person.name);
+      page.find('.email').attr('href', 'mailto:' + person.email)
+                         .text(person.email);
+      page.find('.title').text(person.title);
+      if (person.thumbnail) {
+        var img = $('<img></img>');
+        img.attr('src', 'images/people/' + person.email + '.jpg');
+        page.find('.photo').append(img);
+      } else
+        page.find('.photo').remove();
+      if (person.ims) {
+        if (typeof(person.ims) == 'string')
+          person.ims = [person.ims];
+        person.ims.forEach(function(im) {
+          var item = $('<li></li>');
+          item.text(im);
+          page.find('.ims').append(item);
+        });
+      } else
+        page.find('.ims').remove();
+      if (person.phones) {
+        if (typeof(person.phones) == 'string')
+          person.phones = [person.phones];
+        person.phones.forEach(function(phone) {
+          var item = $('<li></li>');
+          item.text(phone);
+          page.find('.phones').append(item);
+        });
+      } else
+        page.find('.phones').remove();
+      $(document.body).append(page);
+    });
+    $("div#people").append(list);
+  });
+}
+</script>
+<script src="load-people.js"></script>
+<script src="jquery.mobile-1.0a4.min.js"></script>
+<style>
+@import url('jquery.mobile-1.0a4.min.css');
+</style>
+<div data-role="page">
+  <div data-role="header">
+    <h1>Mozilla Mobile Phonebook</h1>
+  </div>
+  <div id="people" data-role="content">
+  </div>
+</div>
+<div id="templates">
+  <div data-role="page" class="detail">
+    <div data-role="header">
+      <h1></h1>
+    </div>
+    <div data-role="content">
+      <div class="photo"></div>
+      <div class="title"></div>
+      <div class="email-container"><a class="email"></a></div>
+      <ul class="ims"></ul>
+      <ul class="phones"></ul>
+    </div>
+  </div>
+</div>
