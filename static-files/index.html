@@ -10,7 +10,8 @@ div#templates {
 <script>
 function onLoadPeople(people) {
   $(window).ready(function() {
-    var list = $('<ul data-role="listview" data-theme="c"></ul>');
+    var list = $('<ul data-role="listview" data-theme="c"' + 
+                 'data-filter="true"></ul>');
     people.forEach(function(person) {
       var item = $('<li></li>');
       var link = $('<a></a>');
