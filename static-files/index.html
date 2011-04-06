@@ -15,18 +15,61 @@ ul.ims, ul.phones {
 <script>
 const KEY_DELAY_MS = 500;
 
+function makeThumbnail(person) {
+  var img = $('<img></img>');
+  img.attr('src', 'images/people/' + person.email + '.jpg');
+  return img;
+}
+
+function makePersonPage(person) {
+  var pages = $('div#detail-pages');
+  var page = $('#templates div.detail').clone();
+  page.attr('id', person.email);
+  page.find('h1').text(person.name);
+  page.find('.email').attr('href', 'mailto:' + person.email)
+                     .text(person.email);
+  page.find('.title').text(person.title);
+  if (person.thumbnail) {
+    page.find('.photo').append(makeThumbnail(person));
+  } else
+    page.find('.photo').remove();
+  if (person.ims) {
+    if (typeof(person.ims) == 'string')
+      person.ims = [person.ims];
+    person.ims.forEach(function(im) {
+      var item = $('<li></li>');
+      item.text(im);
+      page.find('.ims').append(item);
+    });
+  } else
+    page.find('.im-container').remove();
+  if (person.phones) {
+    if (typeof(person.phones) == 'string')
+      person.phones = [person.phones];
+    person.phones.forEach(function(phone) {
+      var item = $('<li></li>');
+      item.text(phone);
+      page.find('.phones').append(item);
+    });
+  } else
+    page.find('.phone-container').remove();
+
+  $(document.body).append(page);
+  pages.append(page);
+
+  // This is a weird thing we need to do in order for the new page
+  // to exist and be linkable.
+  page.attr('data-url', page.attr('id')).page();
+
+  return page;
+}
+
 function showPeople(people) {
   var list = $('ul#results');
   var pages = $('div#detail-pages');
 
   list.empty();
   pages.empty();
-
-  function makeThumbnail(person) {
-    var img = $('<img></img>');
-    img.attr('src', 'images/people/' + person.email + '.jpg');
-    return img;
-  }
 
   people.forEach(function(person) {
     var item = $('<li></li>');
@@ -41,42 +84,7 @@ function showPeople(people) {
     link.attr('href', '#' + person.email);
     list.append(item);
 
-    var page = $('#templates div.detail').clone();
-    page.attr('id', person.email);
-    page.find('h1').text(person.name);
-    page.find('.email').attr('href', 'mailto:' + person.email)
-                       .text(person.email);
-    page.find('.title').text(person.title);
-    if (person.thumbnail) {
-      page.find('.photo').append(makeThumbnail(person));
-    } else
-      page.find('.photo').remove();
-    if (person.ims) {
-      if (typeof(person.ims) == 'string')
-        person.ims = [person.ims];
-      person.ims.forEach(function(im) {
-        var item = $('<li></li>');
-        item.text(im);
-        page.find('.ims').append(item);
-      });
-    } else
-      page.find('.im-container').remove();
-    if (person.phones) {
-      if (typeof(person.phones) == 'string')
-        person.phones = [person.phones];
-      person.phones.forEach(function(phone) {
-        var item = $('<li></li>');
-        item.text(phone);
-        page.find('.phones').append(item);
-      });
-    } else
-      page.find('.phone-container').remove();
-
-    pages.append(page);
-
-    // This is a weird thing we need to do in order for the new page
-    // to exist and be linkable.
-    page.attr('data-url', page.attr('id')).page();
+    makePersonPage(person);
   });
 
   // TODO: For some reason the first list element isn't styled properly,
@@ -99,7 +107,18 @@ function filterPeople(people, query) {
 }
 
 function onLoadPeople(people) {
-  // TODO: Detail pages can't currently be bookmarked.
+  // TODO: Can't go back to search page from a bookmarked detail page.
+  if (location.hash && location.hash != '#') {
+    var email = location.hash.slice(1);
+    var matches = filterPeople(people, email);
+    if (matches.length) {
+      console.log(matches);
+      $(window).ready(function() {
+        makePersonPage(matches[0]);
+      });
+    }
+  }
+
   $(window).ready(function() {
     var timerID = null;
     var lastQuery = "";
