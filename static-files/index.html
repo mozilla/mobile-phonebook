@@ -14,7 +14,7 @@ ul.ims, ul.phones {
 </style>
 <script src="jquery.min.js"></script>
 <script>
-const KEY_DELAY_MS = 250;
+const KEY_DELAY_MS = 500;
 
 function makeThumbnail(person) {
   var img = $('<img></img>');
@@ -127,6 +127,28 @@ function onLoadPeople(people) {
   $(window).ready(function() {
     var timerID = null;
     var lastQuery = "";
+
+    function filter() {
+      var query = $('input#search').val();
+      if (query == lastQuery)
+        return;
+      lastQuery = query;
+      var filteredPeople = [];
+      if (query.length > 2)
+        filteredPeople = filterPeople(people, query);
+      showPeople(filteredPeople);
+      if (timerID != null) {
+        clearTimeout(timerID);
+        timerID = null;
+      }
+    }
+
+    function scheduleFilter() {
+      var input = $(this);
+      if (timerID != null)
+        clearTimeout(timerID);
+      timerID = setTimeout(filter, KEY_DELAY_MS);
+    }
     
     // TODO: We currently need to bind this live, because
     // jQuery Mobile will destroy the element and recreate
@@ -134,23 +156,8 @@ function onLoadPeople(people) {
     // unbind all static handlers on it. Ideally, we should
     // be able to wait until widget-ification occurs and then
     // bind statically, or somesuch.
-    $('input#search').live("keyup", function(event) {
-      var input = $(this);
-      if (timerID != null)
-        clearTimeout(timerID);
-      timerID = setTimeout(function() {
-        var query = input.val();
-        if (query == lastQuery)
-          return;
-        lastQuery = query;
-        var filteredPeople = [];
-        if (query.length > 2)
-          filteredPeople = filterPeople(people, query);
-        showPeople(filteredPeople);
-        clearTimeout(timerID);
-        timerID = null;
-      }, KEY_DELAY_MS);
-    });
+    $('input#search').live("change", filter)
+                     .live("keyup", scheduleFilter);
   });
 }
 </script>
