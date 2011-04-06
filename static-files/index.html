@@ -108,7 +108,7 @@ function filterPeople(people, query) {
 
 function onLoadPeople(people) {
   // TODO: Can't go back to search page from a bookmarked detail page.
-  if (location.hash && location.hash != '#') {
+  if (location.hash && location.hash != '#' && location.hash != '#home') {
     var email = location.hash.slice(1);
     var matches = filterPeople(people, email);
     if (matches.length)
@@ -154,7 +154,7 @@ function onLoadPeople(people) {
 <style>
 @import url('jquery.mobile-1.0a4.min.css');
 </style>
-<div data-role="page">
+<div data-role="page" id="home">
   <div data-role="header">
     <h1>Mozilla Mobile Phonebook</h1>
   </div>
@@ -179,6 +179,7 @@ function onLoadPeople(people) {
   <div data-role="page" class="detail">
     <div data-role="header">
       <h1></h1>
+      <a href="#home" data-icon="home" data-iconpos="notext" data-direction="reverse" class="ui-btn-right jqm-home">Home</a>
     </div>
     <div data-role="content">
       <div class="photo"></div>
