@@ -8,53 +8,104 @@ div#templates {
 </style>
 <script src="jquery.min.js"></script>
 <script>
-function onLoadPeople(people) {
-  $(window).ready(function() {
-    var list = $('<ul data-role="listview" data-theme="g"' + 
-                 'data-filter="true"></ul>');
-    people.forEach(function(person) {
-      var item = $('<li></li>');
-      var link = $('<a></a>');
-      item.append(link);
-      link.attr('href', '#' + person.email);
-      link.text(person.name);
-      list.append(item);
+function showPeople(people) {
+  var list = $('ul#results');
+  var pages = $('div#detail-pages');
 
-      var page = $('#templates div.detail').clone();
-      page.attr('id', person.email);
-      page.find('h1').text(person.name);
-      page.find('.email').attr('href', 'mailto:' + person.email)
-                         .text(person.email);
-      page.find('.title').text(person.title);
-      if (person.thumbnail) {
-        var img = $('<img></img>');
-        img.attr('src', 'images/people/' + person.email + '.jpg');
-        page.find('.photo').append(img);
-      } else
-        page.find('.photo').remove();
-      if (person.ims) {
-        if (typeof(person.ims) == 'string')
-          person.ims = [person.ims];
-        person.ims.forEach(function(im) {
-          var item = $('<li></li>');
-          item.text(im);
-          page.find('.ims').append(item);
-        });
-      } else
-        page.find('.ims').remove();
-      if (person.phones) {
-        if (typeof(person.phones) == 'string')
-          person.phones = [person.phones];
-        person.phones.forEach(function(phone) {
-          var item = $('<li></li>');
-          item.text(phone);
-          page.find('.phones').append(item);
-        });
-      } else
-        page.find('.phones').remove();
-      $(document.body).append(page);
+  list.empty();
+  pages.empty();
+
+  people.forEach(function(person) {
+    var item = $('<li></li>');
+    var link = $('<a></a>');
+    item.append(link);
+    link.attr('href', '#' + person.email);
+    link.text(person.name);
+    list.append(item);
+
+    var page = $('#templates div.detail').clone();
+    page.attr('id', person.email);
+    page.find('h1').text(person.name);
+    page.find('.email').attr('href', 'mailto:' + person.email)
+                       .text(person.email);
+    page.find('.title').text(person.title);
+    if (person.thumbnail) {
+      var img = $('<img></img>');
+      img.attr('src', 'images/people/' + person.email + '.jpg');
+      page.find('.photo').append(img);
+    } else
+      page.find('.photo').remove();
+    if (person.ims) {
+      if (typeof(person.ims) == 'string')
+        person.ims = [person.ims];
+      person.ims.forEach(function(im) {
+        var item = $('<li></li>');
+        item.text(im);
+        page.find('.ims').append(item);
+      });
+    } else
+      page.find('.ims').remove();
+    if (person.phones) {
+      if (typeof(person.phones) == 'string')
+        person.phones = [person.phones];
+      person.phones.forEach(function(phone) {
+        var item = $('<li></li>');
+        item.text(phone);
+        page.find('.phones').append(item);
+      });
+    } else
+      page.find('.phones').remove();
+
+    pages.append(page);
+
+    // This is a weird thing we need to do in order for the new page
+    // to exist and be linkable.
+    page.attr('data-url', page.attr('id')).page();
+  });
+
+  list.data('listview').refresh();
+}
+
+function filterPeople(people, query) {
+  var filtered = [];
+  var regexp = new RegExp(query, 'i');
+  people.forEach(function(person) {
+    if (regexp.test(person.name) || regexp.test(person.email) ||
+        regexp.test(person.title))
+      filtered.push(person);
+  });
+  return filtered;
+}
+
+function onLoadPeople(people) {
+  // TODO: Detail pages can't currently be bookmarked.
+  $(window).ready(function() {
+    var timerID = null;
+    var lastQuery = "";
+    
+    // TODO: We currently need to bind this live, because
+    // jQuery Mobile will destroy the element and recreate
+    // it when it widget-ifies the markup at load time, or at least will
+    // unbind all static handlers on it. Ideally, we should
+    // be able to wait until widget-ification occurs and then
+    // bind statically, or somesuch.
+    $('input#search').live("keyup", function(event) {
+      var input = $(this);
+      if (timerID != null)
+        clearTimeout(timerID);
+      timerID = setTimeout(function() {
+        var query = input.val();
+        if (query == lastQuery)
+          return;
+        lastQuery = query;
+        var filteredPeople = [];
+        if (query.length > 2)
+          filteredPeople = filterPeople(people, query);
+        showPeople(filteredPeople);
+        clearTimeout(timerID);
+        timerID = null;
+      }, 500);
     });
-    $("div#people").append(list);
   });
 }
 </script>
@@ -67,9 +118,15 @@ function onLoadPeople(people) {
   <div data-role="header">
     <h1>Mozilla Mobile Phonebook</h1>
   </div>
-  <div id="people" data-role="content">
+  <div data-role="content">
+    <!-- TODO: This should be the width of the whole page. -->
+    <input type="search" id="search" placeholder="Search for a person" value="" />
+    <!-- TODO: Style this using CSS instead of two linebreaks. -->
+    <br><br>
+    <ul data-role="listview" data-theme="g" id="results"></ul>
   </div>
 </div>
+<div id="detail-pages"></div>
 <div id="templates">
   <div data-role="page" class="detail">
     <div data-role="header">
