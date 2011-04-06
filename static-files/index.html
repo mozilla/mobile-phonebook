@@ -6,6 +6,10 @@
 div#templates {
   display: none;
 }
+
+ul.ims, ul.phones {
+  list-style-type: none;
+}
 </style>
 <script src="jquery.min.js"></script>
 <script>
@@ -56,7 +60,7 @@ function showPeople(people) {
         page.find('.ims').append(item);
       });
     } else
-      page.find('.ims').remove();
+      page.find('.im-container').remove();
     if (person.phones) {
       if (typeof(person.phones) == 'string')
         person.phones = [person.phones];
@@ -66,7 +70,7 @@ function showPeople(people) {
         page.find('.phones').append(item);
       });
     } else
-      page.find('.phones').remove();
+      page.find('.phone-container').remove();
 
     pages.append(page);
 
@@ -153,8 +157,14 @@ function onLoadPeople(people) {
       <div class="photo"></div>
       <div class="title"></div>
       <div class="email-container"><a class="email"></a></div>
-      <ul class="ims"></ul>
-      <ul class="phones"></ul>
+      <div class="im-container">
+        <h4>Instant message / social network usernames</h4>
+        <ul class="ims"></ul>
+      </div>
+      <div class="phone-container">
+        <h4>Phone numbers</h4>
+        <ul class="phones"></ul>
+      </div>
     </div>
   </div>
 </div>
