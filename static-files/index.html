@@ -9,6 +9,8 @@ div#templates {
 </style>
 <script src="jquery.min.js"></script>
 <script>
+const KEY_DELAY_MS = 500;
+
 function showPeople(people) {
   var list = $('ul#results');
   var pages = $('div#detail-pages');
@@ -16,12 +18,23 @@ function showPeople(people) {
   list.empty();
   pages.empty();
 
+  function makeThumbnail(person) {
+    var img = $('<img></img>');
+    img.attr('src', 'images/people/' + person.email + '.jpg');
+    return img;
+  }
+
   people.forEach(function(person) {
     var item = $('<li></li>');
     var link = $('<a></a>');
+    var p = $('<p></p>');
+    var h = $('<h3></h3>');
+
+    p.text(person.title);
+    h.text(person.name);
+    link.append(makeThumbnail(person), h, p);
     item.append(link);
     link.attr('href', '#' + person.email);
-    link.text(person.name);
     list.append(item);
 
     var page = $('#templates div.detail').clone();
@@ -31,9 +44,7 @@ function showPeople(people) {
                        .text(person.email);
     page.find('.title').text(person.title);
     if (person.thumbnail) {
-      var img = $('<img></img>');
-      img.attr('src', 'images/people/' + person.email + '.jpg');
-      page.find('.photo').append(img);
+      page.find('.photo').append(makeThumbnail(person));
     } else
       page.find('.photo').remove();
     if (person.ims) {
@@ -63,6 +74,11 @@ function showPeople(people) {
     // to exist and be linkable.
     page.attr('data-url', page.attr('id')).page();
   });
+
+  // TODO: For some reason the first list element isn't styled properly,
+  // so we'll prepend the list with a dummy element.
+  if (people.length)
+    list.prepend('<li></li>');
 
   list.data('listview').refresh();
 }
@@ -105,7 +121,7 @@ function onLoadPeople(people) {
         showPeople(filteredPeople);
         clearTimeout(timerID);
         timerID = null;
-      }, 500);
+      }, KEY_DELAY_MS);
     });
   });
 }
@@ -124,7 +140,7 @@ function onLoadPeople(people) {
     <input type="search" id="search" placeholder="Search for a person" value="" />
     <!-- TODO: Style this using CSS instead of two linebreaks. -->
     <br><br>
-    <ul data-role="listview" data-theme="g" id="results"></ul>
+    <ul data-role="listview" id="results"></ul>
   </div>
 </div>
 <div id="detail-pages"></div>
