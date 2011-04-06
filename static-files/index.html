@@ -111,12 +111,12 @@ function onLoadPeople(people) {
   if (location.hash && location.hash != '#') {
     var email = location.hash.slice(1);
     var matches = filterPeople(people, email);
-    if (matches.length) {
-      console.log(matches);
+    if (matches.length)
       $(window).ready(function() {
         makePersonPage(matches[0]);
       });
-    }
+    else
+      location.hash = '#not-found';
   }
 
   $(window).ready(function() {
@@ -164,6 +164,14 @@ function onLoadPeople(people) {
     <!-- TODO: Style this using CSS instead of two linebreaks. -->
     <br><br>
     <ul data-role="listview" id="results"></ul>
+  </div>
+</div>
+<div data-role="page" id="not-found">
+  <div data-role="header">
+    <h1>User Not Found</h1>
+  </div>
+  <div data-role="content">
+    <p>Sorry, that user was not found.</p>
   </div>
 </div>
 <div id="detail-pages"></div>
