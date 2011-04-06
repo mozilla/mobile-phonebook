@@ -2,3 +2,4 @@ config.json
 people.json
 static-files/images/people/
 static-files/load-people.js
+static-files/cache.manifest

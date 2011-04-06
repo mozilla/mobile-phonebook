@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+<html manifest="cache.manifest">
 <meta charset="utf-8">
 <title>Mozilla Mobile Phonebook</title>
 <!-- TODO: Use a HTML manifest. -->
@@ -17,7 +18,14 @@ const KEY_DELAY_MS = 250;
 
 function makeThumbnail(person) {
   var img = $('<img></img>');
-  img.attr('src', 'images/people/' + person.email + '.jpg');
+  var thumbnail;
+  
+  if (person.thumbnail)
+    thumbnail = 'images/people/' + person.email + '.jpg';
+  else
+    thumbnail = 'images/no-photo.jpg';
+
+  img.attr('src', thumbnail);
   return img;
 }
 
@@ -29,10 +37,7 @@ function makePersonPage(person) {
   page.find('.email').attr('href', 'mailto:' + person.email)
                      .text(person.email);
   page.find('.title').text(person.title);
-  if (person.thumbnail) {
-    page.find('.photo').append(makeThumbnail(person));
-  } else
-    page.find('.photo').remove();
+  page.find('.photo').append(makeThumbnail(person));
   if (person.ims) {
     if (typeof(person.ims) == 'string')
       person.ims = [person.ims];
@@ -196,3 +201,4 @@ function onLoadPeople(people) {
     </div>
   </div>
 </div>
+</html>

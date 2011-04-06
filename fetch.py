@@ -4,8 +4,9 @@ import json
 import urllib2
 
 MY_DIR = os.path.abspath(os.path.dirname(__file__))
+STATIC_FILES_DIR = os.path.join(MY_DIR, 'static-files')
 JSON_FEED_FILENAME = os.path.join(MY_DIR, 'people.json')
-THUMBNAIL_DIR = os.path.join(MY_DIR, 'static-files', 'images', 'people')
+THUMBNAIL_DIR = os.path.join(STATIC_FILES_DIR, 'images', 'people')
 
 BASE_URL = 'https://ldap.mozilla.org/phonebook'
 JSON_URL = '%s/directory.php' % BASE_URL
