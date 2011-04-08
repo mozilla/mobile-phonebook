@@ -11,6 +11,10 @@ div#templates {
 ul.ims, ul.phones {
   list-style-type: none;
 }
+
+.ui-input-search {
+  width: 90% !important;
+}
 </style>
 <script src="jquery.min.js"></script>
 <script>
@@ -112,7 +116,6 @@ function filterPeople(people, query) {
 }
 
 function onLoadPeople(people) {
-  // TODO: Can't go back to search page from a bookmarked detail page.
   if (location.hash && location.hash != '#' && location.hash != '#home') {
     var email = location.hash.slice(1);
     var matches = filterPeople(people, email);
@@ -171,7 +174,6 @@ function onLoadPeople(people) {
     <h1>Mozilla People</h1>
   </div>
   <div data-role="content">
-    <!-- TODO: This should be the width of the whole page. -->
     <input type="search" id="search" placeholder="Search for a person" value="" />
     <!-- TODO: Style this using CSS instead of two linebreaks. -->
     <br><br>
