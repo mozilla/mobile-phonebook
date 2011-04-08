@@ -1,4 +1,6 @@
-I made this phonebook to scratch two itches:
+## Mozilla Mobile Phonebook README ##
+
+[Atul](http://toolness.com) made this phonebook to scratch two itches:
 
 * Learn how to use [JQuery Mobile](http://jquerymobile.com/).
 * Make an offline-capable version of the [Mozilla Phonebook](https://ldap.mozilla.org/phonebook/) with a user interface that's optimized for small screens.
