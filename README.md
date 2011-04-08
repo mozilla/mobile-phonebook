@@ -30,4 +30,4 @@ All you need is Python 2.6 or later, which is used to run scripts that talk to L
 
 ## Development ##
 
-When you're hacking on the app's HTML, make sure you delete the `static-files/cache.manifest` file, which is created by `combine.py`. This will cause the browser to obsolete the application cache and ensure that you're always looking at the latest version of your code when you reload the page.
+When you're hacking on the app's HTML/JS/CSS, make sure you delete the `static-files/cache.manifest` file, which is created by `combine.py`. This will cause the browser to obsolete the application cache and ensure that you're always looking at the latest version of your code when you reload the page.
