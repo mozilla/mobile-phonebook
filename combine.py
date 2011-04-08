@@ -43,8 +43,6 @@ if __name__ == '__main__':
     f.write('CACHE MANIFEST\n')
     f.write('# Created %s\n' % str(datetime.datetime.now()))
     for dirpath, dirnames, filenames in os.walk(fetch.STATIC_FILES_DIR):
-        if 'people' in dirnames:
-            dirnames.remove('people')
         filenames = [filename for filename in filenames
                      if filename not in ['cache.manifest']]
         relpath = dirpath[len(fetch.STATIC_FILES_DIR)+1:]
@@ -52,6 +50,4 @@ if __name__ == '__main__':
             relpath += '/'
         for filename in filenames:
             f.write('%s%s\n' % (relpath, filename))
-    f.write('FALLBACK:\n')
-    f.write('images/people/ images/no-photo.jpg\n')
     f.close()
