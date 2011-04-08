@@ -13,9 +13,11 @@ Very little of the source code contains confidential information; in fact, the o
 
 All you need is Python 2.6 or later, which is used to run scripts that talk to LDAP and cache the Phonebook contents as static files. The actual web app consists entirely of static files.
 
-## Usage ##
+## Caching The LDAP Phonebook ##
 
-* Create a file in the root directory of the repository called `config.json`. Paste the following into it and edit as necessary:
+This must be done before you can develop or deploy the app.
+
+First, create a file in the root directory of the repository called `config.json`. Paste the following into it and edit as necessary:
 
 <pre>
     {
@@ -24,10 +26,14 @@ All you need is Python 2.6 or later, which is used to run scripts that talk to L
     }
 </pre>
 
-* Run `fetch.py && combine.py`.
-
-* Serve the contents of the `static-files` folder. For local development only, you can use HTTP; for hosting on the Web, make sure it is served over HTTPS with some kind of access control.
+Then run `fetch.py`, followed by `combine.py`.
 
 ## Development ##
 
-When you're hacking on the app's HTML/JS/CSS, make sure you delete the `static-files/cache.manifest` file, which is created by `combine.py`. This will cause the browser to obsolete the application cache and ensure that you're always looking at the latest version of your code when you reload the page.
+If you're going to be changing any HTML, CSS, or JavaScript content, delete the `static-files/cache.manifest` file, which is created by `combine.py`. This will cause the browser to obsolete the application cache and ensure that you're always looking at the latest version of your code when you reload the page.
+
+Then, run `server.py` and browse to [http://localhost:8001/](http://localhost:8001/).
+
+## Deployment ##
+
+Simply re-run `combine.py` if necessary and serve the contents of the `static-files` folder over HTTPS with some kind of access control. You should also make sure that `.manifest` files are served with the MIME type `text/cache-manifest`.
