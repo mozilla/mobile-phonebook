@@ -69,7 +69,7 @@ def maybe_fetch_thumbnail(email):
         if e.code != 404:
             raise
 
-if __name__ == '__main__':
+def main():
     config = json.load(open('config.json', 'r'))
     install_auth_handler(config['username'], config['password'])
     
@@ -80,3 +80,6 @@ if __name__ == '__main__':
         os.mkdir(THUMBNAIL_DIR)
 
     fetch_thumbnails([email for email in people])
+
+if __name__ == '__main__':
+    main()

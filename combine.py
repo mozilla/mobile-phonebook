@@ -7,7 +7,7 @@ LOAD_PEOPLE = os.path.join(fetch.STATIC_FILES_DIR, 'load-people.js')
 MANIFEST = os.path.join(fetch.STATIC_FILES_DIR, 'cache.manifest')
 NO_PHOTO = os.path.join(fetch.STATIC_FILES_DIR, 'images', 'no-photo.jpg')
 
-if __name__ == '__main__':
+def main():
     print 'Writing %s.' % LOAD_PEOPLE
 
     people = json.load(open(fetch.JSON_FEED_FILENAME, 'r'))
@@ -51,3 +51,6 @@ if __name__ == '__main__':
         for filename in filenames:
             f.write('%s%s\n' % (relpath, filename))
     f.close()
+
+if __name__ == '__main__':
+    main()
