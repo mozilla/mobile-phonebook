@@ -44,21 +44,19 @@ def install_auth_handler(username, password):
     opener = urllib2.build_opener(auth_handler)
     urllib2.install_opener(opener)
 
-def maybe_fetch_json_feed():
-    if not os.path.exists(JSON_FEED_FILENAME):
-        print "Fetching JSON feed."
-        response = urllib2.urlopen(JSON_URL).read()
-        # Bleh, have to strip out some PHP warnings.
-        response = response[response.index('{'):]
-        f = open(JSON_FEED_FILENAME, 'w')
-        f.write(response)
-        f.close()
+def fetch_json_feed():
+    print "Fetching JSON feed."
+    response = urllib2.urlopen(JSON_URL).read()
+    # Bleh, have to strip out some PHP warnings.
+    response = response[response.index('{'):]
+    f = open(JSON_FEED_FILENAME, 'w')
+    f.write(response)
+    f.close()
 
 def maybe_fetch_thumbnail(email):
     thumbnail = os.path.join(THUMBNAIL_DIR, '%s.jpg' % email)
-    if not os.path.exists(thumbnail):
-        return
-    if os.stat(thumbnail).st_size != NO_PHOTO_THUMBNAIL_SIZE:
+    if (os.path.exists(thumbnail) and
+        os.stat(thumbnail).st_size != NO_PHOTO_THUMBNAIL_SIZE):
         return
     print "Fetching thumbnail for %s..." % email
     try:
@@ -75,7 +73,7 @@ if __name__ == '__main__':
     config = json.load(open('config.json', 'r'))
     install_auth_handler(config['username'], config['password'])
     
-    maybe_fetch_json_feed()    
+    fetch_json_feed()    
     people = json.load(open(JSON_FEED_FILENAME))
 
     if not os.path.exists(THUMBNAIL_DIR):
