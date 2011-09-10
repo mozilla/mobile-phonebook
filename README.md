@@ -34,6 +34,14 @@ If you're going to be changing any HTML, CSS, or JavaScript content, delete the 
 
 Then, run `server.py` and browse to [http://localhost:8001/](http://localhost:8001/).
 
+## Updating ##
+
+Run `fetch.py` followed by `combine.py`. This will refresh all phone numbers
+and employee information, and it will attempt to fetch thumbnails for all
+employees that haven't yet submitted a photo. If you want to update all
+photos, delete the `static-files/images/people` directory before running
+`fetch.py`.
+
 ## Deployment ##
 
 Simply re-run `combine.py` if necessary and serve the contents of the `static-files` folder over HTTPS with some kind of access control. You should also make sure that `.manifest` files are served with the MIME type `text/cache-manifest`.
