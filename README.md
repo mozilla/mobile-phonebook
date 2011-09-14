@@ -19,12 +19,10 @@ This must be done before you can develop or deploy the app.
 
 First, create a file in the root directory of the repository called `config.json`. Paste the following into it and edit as necessary:
 
-<pre>
     {
       "username": "my_username@mozilla.com",
       "password": "my_password"
     }
-</pre>
 
 Then run `fetch.py`, followed by `combine.py`.
 
