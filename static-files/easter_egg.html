@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html manifest="cache.manifest">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,user-scalable=no,initial-scale=1, maximum-scale=1">
+<title>Mozilla Name Game</title>
+<head>
+<link type="text/css" rel="stylesheet" href="jquery.mobile-1.0a4.min.css">
+<script>
+var gPeople;
+var right;
+var wrong;
+
+function onLoadPeople(people)
+{
+    people = people.filter(function (person){
+            return person.thumbnail;     
+        });
+    people.forEach(function (person){
+            if (person.title == null) {
+                person.title = "job title not known"
+            }
+            person.thumbnail = "images/people/" + person.email + ".jpg"
+        });
+    gPeople = people;
+}
+</script>
+<script src="load-people.js"></script>
+<script src="jquery.min.js"></script>
+<script>
+function getRandomInt(min, max)
+{
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
+function setImage(person) {
+    $("#thumbnail").attr("src", person.thumbnail);
+}
+function reloadNames(){
+    setNames(getRandomPeople(gPeople));
+}
+function setNames(people) {
+  var correctPerson = people[getRandomInt(0, people.length-1)];
+  $("#mail").unbind();
+  $("#names").empty();
+  $("#names").append("<h2>Who is this?</h2>");
+  setImage(correctPerson);
+  $("#mail").click(function() {
+    parent.location='mailto:' + correctPerson.email + '?subject=Please update your phonebook photo&body=Hi, I was playing the Mozilla Phonebook game {url} and noticed your picture is missing or doesn\'t show your face.  If you have a chance, please upload a new one.  Thanks!';
+  });
+  people.forEach(function(person) {
+    var name = $("#templates .name").clone();
+    name.text(person.name);
+    name.click(function() {
+        $("#intro").fadeOut();
+        $("#feedback").show();
+        $("#feedback").empty();
+        if (person.name == correctPerson.name){
+            // TODO take out title when it's null
+            $("#feedback").text("Correct! That was " + person.name);
+            if (person.title != null){
+                $("#feedback").append(", " + person.title);
+            }
+            right++;
+            $("#score .right").text(right);
+        }else{
+            $("#feedback").text("Nope. That was " + correctPerson.name + ", " + person.title);
+            wrong++;
+            $("#score .wrong").text(wrong);
+        }
+        reloadNames();
+
+        $('#feedback').click(function() {
+            $('#feedback').hide()
+        });
+        $('#score').fadeIn();
+        $('#mail').fadeIn();
+    });
+    $("#names").append(name);
+  });
+}
+function getRandomPeople(people) {
+    var arr = [];
+    while (arr.length < 4) {
+        index = getRandomInt(0,people.length-1);
+        var randomPerson = people[index];
+        var found = false;
+        for (var i=0; i < arr.length; i++) {
+            if (arr[i].name==randomPerson.name){
+                found = true;
+                break;
+            }
+        }
+        if (!found) {
+            arr[arr.length]=randomPerson;
+        }
+    }
+    return arr;
+}
+
+$(window).ready(function() {
+  right = 0;
+  wrong = 0;
+  $("#score .right").text(0);
+  $("#score .wrong").text(0);
+  // would like to make feedback box appear/disappear when there's no content
+  setNames(getRandomPeople(gPeople));
+});
+</script>
+<style>
+* {
+  margin: 0;
+  padding: 0;
+  font-family: inherit;
+  font-size: 100%;
+  font-weight: inherit;
+  font-style: inherit;
+  text-decoration: none;
+  list-style: none;
+  }
+
+@font-face {
+  font-family: "Droid Sans";
+  src: url(fonts/DroidSans.ttf) format("truetype");
+}
+
+@font-face {
+  font-family: "Droid Sans";
+  font-weight: bold;
+  src: url(fonts/DroidSans-Bold.ttf) format("truetype");
+}
+
+html {
+  font: 16px "Lucida Grande", "Droid Sans", "Trebuchet MS", sans-serif;
+  font-weight: normal;
+  font-style: normal;
+  background: url(images/bg.png) #67a7c7 repeat-x fixed;
+  color: #fff;
+}
+a { display: block; padding: 2px;}
+a:hover { color: #000; font-weight: bold; }
+#feedback {
+  position: fixed;
+  top: 50px;
+  bottom: 50px;
+  right: 10px;
+  left: 10px;
+  margin: 10px;
+  padding: 10px;
+  background-color: rgba(32, 32, 32, 0.5);
+  text-align: center;
+  vertical-align: center;
+  display: none;
+  overflow: hidden;
+  height: 60%;
+  width: 80%;
+  z-index: 2;
+}
+#wrapper {
+  margin: 0 auto;
+  width: 80%;
+  padding: 20px;
+}
+#names {
+  float: left;
+  text-align: left;
+  display: inline-block;
+  width: 70%;
+  vertical-align: top;
+  margin: 1em 1em 0 1em;
+}
+#score {
+    float: left;
+    display: none;
+    top: 5px;
+}
+#intro {
+    float: left;
+    padding: 20px;
+}
+#mail {
+    display: none;
+    padding: 5px;
+    margin: 5px;
+}
+
+#score .right,.wrong { display: inline; padding: 5px}
+#templates { display: none; }
+img { float: left; }
+h2 {
+    font-weight: bold;
+    color: #ff6633;
+    padding: 5px;
+    background-color: rgba(32, 32, 32, 0.5);
+    text-align: center;
+    vertical-align: center;
+}
+</style>
+</head>
+    <body>
+        <div id="wrapper">
+            <div id="score">
+                <p>Right:<span class="right">0</span>Wrong:<span class="wrong">0</span></p>
+            </div>
+            <img id="thumbnail" class="photo" />
+            <div id="names">
+            </div>
+            <div id="intro">Welcome to the Mozilla Name Game.  Can you guess who's who?</div>
+            <div id="feedback"></div>
+            <input type="button" value="Gently prod for new photo" id="mail" />
+            
+        </div>
+        <!-- divs below this point are hidden intentionally -->
+        <div id="templates">
+          <a class="name">Name</a>
+        </div>
+    </body>
+</html>
