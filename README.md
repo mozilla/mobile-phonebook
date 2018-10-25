@@ -5,10 +5,6 @@
 * Learn how to use [JQuery Mobile](http://jquerymobile.com/).
 * Make an offline-capable version of the [Mozilla Phonebook](https://ldap.mozilla.org/phonebook/) with a user interface that's optimized for small screens.
 
-## Why This Isn't Public ##
-
-Very little of the source code contains confidential information; in fact, the only thing that can potentially be considered confidential is the URL to Mozilla's LDAP server in `fetch.py`. It'd be nice to decouple that from the rest of the app, and then make the code public.
-
 ## Prerequisites ##
 
 All you need is Python 2.6 or later, which is used to run scripts that talk to LDAP and cache the Phonebook contents as static files. The actual web app consists entirely of static files.
